@@ -1,0 +1,16 @@
+{
+  "projects": [
+    {
+      "id": "123456789",
+      "name": "Mobile App Design"
+    },
+    {
+      "id": "987654321",
+      "name": "Website Redesign"
+    },
+    {
+      "id": "456789123",
+      "name": "Brand Guidelines"
+    }
+  ]
+}

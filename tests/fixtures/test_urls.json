@@ -1,0 +1,29 @@
+{
+  "valid_urls": {
+    "file_basic": "https://www.figma.com/file/ABC123/my-design",
+    "file_with_node": "https://www.figma.com/file/ABC123/my-design?node-id=1%3A2",
+    "file_complex": "https://www.figma.com/file/XYZ789/Complex-Design-File/duplicate?node-id=3%3A4&other=param",
+    "project": "https://www.figma.com/files/project/123456789",
+    "team": "https://www.figma.com/files/team/987654321",
+    "file_no_www": "https://figma.com/file/DEF456/design-without-www",
+    "file_http": "http://www.figma.com/file/GHI789/http-design"
+  },
+  "invalid_urls": {
+    "non_figma": "https://example.com/not-figma",
+    "incomplete": "https://www.figma.com/",
+    "unknown_path": "https://www.figma.com/unknown/path"
+  },
+  "expected_extractions": {
+    "file_ids": {
+      "ABC123": "https://www.figma.com/file/ABC123/my-design",
+      "XYZ789": "https://www.figma.com/file/XYZ789/Complex-Design-File/duplicate",
+      "DEF456": "https://figma.com/file/DEF456/design-without-www"
+    },
+    "project_ids": {
+      "123456789": "https://www.figma.com/files/project/123456789"
+    },
+    "team_ids": {
+      "987654321": "https://www.figma.com/files/team/987654321"
+    }
+  }
+}

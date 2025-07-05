@@ -1,0 +1,89 @@
+{
+  "document": {
+    "id": "0:0",
+    "name": "Document",
+    "type": "DOCUMENT",
+    "visible": true,
+    "children": [
+      {
+        "id": "1:2",
+        "name": "Page 1",
+        "type": "CANVAS",
+        "visible": true,
+        "children": [
+          {
+            "id": "1:3",
+            "name": "Frame 1",
+            "type": "FRAME",
+            "visible": true,
+            "backgroundColor": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 375,
+              "height": 812
+            },
+            "children": [
+              {
+                "id": "1:4",
+                "name": "Rectangle 1",
+                "type": "RECTANGLE",
+                "visible": true,
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "visible": true,
+                    "opacity": 1,
+                    "color": {
+                      "r": 0.2,
+                      "g": 0.4,
+                      "b": 0.8,
+                      "a": 1
+                    },
+                    "blendMode": "NORMAL"
+                  }
+                ],
+                "absoluteBoundingBox": {
+                  "x": 50,
+                  "y": 100,
+                  "width": 275,
+                  "height": 50
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "components": {
+    "component-123": {
+      "key": "component-123",
+      "name": "Button Component",
+      "description": "A reusable button component",
+      "componentSetId": null,
+      "documentUrl": "https://www.figma.com/file/ABC123/design"
+    }
+  },
+  "styles": {
+    "style-456": {
+      "key": "style-456",
+      "name": "Primary Color",
+      "description": "Main brand color",
+      "styleType": "FILL",
+      "remote": false
+    }
+  },
+  "name": "Test Design File",
+  "lastModified": "2024-01-15T10:30:00.000Z",
+  "thumbnailUrl": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/abc123/thumbnail.png",
+  "version": "1234567890",
+  "role": "owner",
+  "editorType": "figma",
+  "linkAccess": "view"
+}

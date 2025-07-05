@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "key": "ABC123DEF456",
+      "name": "Home Page Design",
+      "thumbnail_url": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/abc123/thumbnail.png",
+      "last_modified": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "key": "GHI789JKL012",
+      "name": "Product Pages",
+      "thumbnail_url": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/ghi789/thumbnail.png",
+      "last_modified": "2024-01-14T16:45:00.000Z"
+    },
+    {
+      "key": "MNO345PQR678",
+      "name": "Component Library",
+      "thumbnail_url": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/mno345/thumbnail.png",
+      "last_modified": "2024-01-13T09:15:00.000Z"
+    }
+  ]
+}
