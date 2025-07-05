@@ -24,4 +24,10 @@ pub enum Error {
     
     #[error("MCP error: {0}")]
     Mcp(#[from] AnyhowError),
+    
+    #[error("Internal error: {0}")]
+    Internal(String),
+    
+    #[error("Not found: {0}")]
+    NotFound(String),
 }

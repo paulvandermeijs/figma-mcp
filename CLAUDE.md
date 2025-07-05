@@ -45,7 +45,7 @@ cargo clippy
 
 ## High-Level Architecture
 
-This is a **Model Context Protocol (MCP) server** that provides AI assistants with tools to access Figma files via Figma's API. The server focuses on file-based operations using a two-step workflow: first parse URLs to extract file keys, then use those keys with file operation tools.
+This is a **Model Context Protocol (MCP) server** that provides AI assistants with tools to access Figma files via Figma's API. The server focuses on file-based operations using a two-step workflow: first parse URLs to extract file keys, then use those keys with file operation tools. Exported images are automatically available as MCP resources with base64-encoded content.
 
 ### Core Architecture Pattern
 
@@ -69,11 +69,19 @@ The codebase follows a **layered architecture** with clear separation between:
 - Implements file-focused Figma API endpoints (files, nodes, image export, user info)
 - Comprehensive error handling for API failures and rate limiting (60 req/min)
 
+**Image Cache (`src/figma/image_cache.rs`)**
+- Manages exported images as MCP resources
+- Thread-safe storage using `Arc<RwLock<HashMap>>`
+- Tracks Figma URLs, export metadata, and cached image data
+- Handles URL expiration and image data caching
+
 **MCP Server (`src/server.rs`)**
 - Implements 6 MCP tools using `#[tool]` attribute macros focused on file operations
 - Uses typed parameter structs with `#[derive(JsonSchema)]` for proper MCP Inspector integration
 - All tools follow pattern: `Parameters<StructName>` for parameter binding
 - Returns JSON strings via `CallToolResult::success()`
+- Implements resource handlers for listing and reading exported images
+- Downloads and base64-encodes images on demand
 
 **Error Handling (`src/error.rs`)**
 - Custom error enum covering all failure modes (API, network, auth, JSON, URL parsing)

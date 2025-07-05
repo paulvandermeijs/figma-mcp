@@ -1,6 +1,6 @@
 [package]
 name = "figma-mcp"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "MCP server for Figma."
 license = "MIT" 
@@ -21,6 +21,7 @@ regex = "1.0"
 thiserror = "2.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+base64 = "0.22"
 
 [dev-dependencies]
 tokio-test = "0.4"
