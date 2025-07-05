@@ -12,6 +12,22 @@ design assets through a standardized interface.
 - **Depth Management**: Control response size to prevent token limits
 - **Resource Support**: Exported images are available as MCP resources with base64-encoded content
 
+## Installation
+
+### Option 1: Install from crates.io (Recommended)
+
+```bash
+cargo install figma-mcp
+```
+
+### Option 2: Build from source
+
+```bash
+git clone https://github.com/your-username/figma-mcp.git
+cd figma-mcp
+cargo build --release
+```
+
 ## Quick Start
 
 1. Get your Figma token from
@@ -23,10 +39,13 @@ design assets through a standardized interface.
    export FIGMA_TOKEN="your_token_here"
    ```
 
-3. Build and run:
+3. Run the server:
    ```bash
-   cargo build --release
-   cargo run
+   # If installed via cargo install
+   figma-mcp
+   
+   # If built from source
+   cargo run --release
    ```
 
 ## Usage

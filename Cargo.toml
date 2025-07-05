@@ -1,11 +1,11 @@
 [package]
 name = "figma-mcp"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
-description = "MCP server for Figma."
+description = "Model Context Protocol (MCP) server for accessing Figma files and exporting images as resources"
 license = "MIT" 
 authors = ["Paul van der Meijs"]
-repository = "https://github.com/paulvandermeijs/gitls"
+repository = "https://github.com/paulvandermeijs/figma-mcp"
 keywords = ["mcp", "mcp-server", "figma"]
 categories = ["development-tools"]
 
