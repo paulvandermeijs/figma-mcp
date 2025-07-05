@@ -1,14 +1,15 @@
+use base64::{engine::general_purpose, Engine as _};
 use rmcp::{
     handler::server::{router::tool::ToolRouter, tool::Parameters},
     model::*,
-    schemars, tool, tool_handler, tool_router,
-    transport::stdio,
+    schemars,
     service::{RequestContext, RoleServer},
+    tool, tool_handler, tool_router,
+    transport::stdio,
     Error as McpError, ServerHandler, ServiceExt,
 };
 use serde::Deserialize;
 use std::future::Future;
-use base64::{Engine as _, engine::general_purpose};
 
 use crate::{
     figma::{FigmaClient, FigmaUrlParser, ImageCache},
@@ -138,7 +139,7 @@ impl FigmaServer {
 
         let format = format.as_deref().unwrap_or("png");
         let scale_value = scale.unwrap_or(1.0);
-        
+
         let result = match self
             .client
             .export_images(&file_key, &node_ids_to_export, format, scale)
@@ -270,16 +271,18 @@ impl ServerHandler for FigmaServer {
         }
     }
 
-    fn list_resources(
+    async fn list_resources(
         &self,
         _request: Option<PaginatedRequestParam>,
         _context: RequestContext<RoleServer>,
-    ) -> impl Future<Output = Result<ListResourcesResult, McpError>> + Send + '_ {
-        async move {
-            let entries = self.image_cache.list_all()
-                .map_err(|e| McpError::internal_error(format!("Failed to list resources: {}", e), None))?;
+    ) -> Result<ListResourcesResult, McpError> {
+        let entries = self.image_cache.list_all().map_err(|e| {
+            McpError::internal_error(format!("Failed to list resources: {}", e), None)
+        })?;
 
-            let resources: Vec<Resource> = entries.iter().map(|(uri, entry)| {
+        let resources: Vec<Resource> = entries
+            .iter()
+            .map(|(uri, entry)| {
                 let name = format!("Node {} Export", entry.node_id);
                 let description = format!(
                     "Exported from Figma file {} as {} ({}x scale)",
@@ -287,76 +290,89 @@ impl ServerHandler for FigmaServer {
                 );
                 let mime_type = crate::figma::ImageCache::get_mime_type(&entry.format);
 
-                Resource::new(RawResource {
-                    uri: uri.clone(),
-                    name,
-                    description: Some(description),
-                    mime_type: Some(mime_type.to_string()),
-                    size: entry.cached_data.as_ref().map(|data| data.len() as u32),
-                }, None)
-            }).collect();
+                Resource::new(
+                    RawResource {
+                        uri: uri.clone(),
+                        name,
+                        description: Some(description),
+                        mime_type: Some(mime_type.to_string()),
+                        size: entry.cached_data.as_ref().map(|data| data.len() as u32),
+                    },
+                    None,
+                )
+            })
+            .collect();
 
-            Ok(ListResourcesResult { resources, next_cursor: None })
-        }
+        Ok(ListResourcesResult {
+            resources,
+            next_cursor: None,
+        })
     }
 
-    fn read_resource(
+    async fn read_resource(
         &self,
         request: ReadResourceRequestParam,
         _context: RequestContext<RoleServer>,
-    ) -> impl Future<Output = Result<ReadResourceResult, McpError>> + Send + '_ {
-        async move {
-            let uri = request.uri;
+    ) -> Result<ReadResourceResult, McpError> {
+        let uri = request.uri;
 
-            let entry = self.image_cache.get_entry(&uri)
-                .map_err(|e| McpError::internal_error(format!("Failed to get resource: {}", e), None))?
-                .ok_or_else(|| McpError::resource_not_found(format!("Resource not found: {}", uri), None))?;
+        let entry = self
+            .image_cache
+            .get_entry(&uri)
+            .map_err(|e| McpError::internal_error(format!("Failed to get resource: {}", e), None))?
+            .ok_or_else(|| {
+                McpError::resource_not_found(format!("Resource not found: {}", uri), None)
+            })?;
 
-            // Check if we need to download the image
-            let image_data = if let Some(cached_data) = entry.cached_data {
-                cached_data
-            } else {
-                // Check if URL is expired
-                if self.image_cache.is_expired(&entry) {
-                    return Err(McpError::internal_error(
-                        "Figma URL has expired. Please re-export the image.",
-                        None
-                    ));
-                }
+        // Check if we need to download the image
+        let image_data = if let Some(cached_data) = entry.cached_data {
+            cached_data
+        } else {
+            // Check if URL is expired
+            if self.image_cache.is_expired(&entry) {
+                return Err(McpError::internal_error(
+                    "Figma URL has expired. Please re-export the image.",
+                    None,
+                ));
+            }
 
-                // Download image from Figma URL
-                let response = reqwest::get(&entry.figma_url).await
-                    .map_err(|e| McpError::internal_error(format!("Failed to download image: {}", e), None))?;
+            // Download image from Figma URL
+            let response = reqwest::get(&entry.figma_url).await.map_err(|e| {
+                McpError::internal_error(format!("Failed to download image: {}", e), None)
+            })?;
 
-                if !response.status().is_success() {
-                    return Err(McpError::internal_error(
-                        format!("Failed to download image: HTTP {}", response.status()),
-                        None
-                    ));
-                }
+            if !response.status().is_success() {
+                return Err(McpError::internal_error(
+                    format!("Failed to download image: HTTP {}", response.status()),
+                    None,
+                ));
+            }
 
-                let data = response.bytes().await
-                    .map_err(|e| McpError::internal_error(format!("Failed to read image data: {}", e), None))?
-                    .to_vec();
+            let data = response
+                .bytes()
+                .await
+                .map_err(|e| {
+                    McpError::internal_error(format!("Failed to read image data: {}", e), None)
+                })?
+                .to_vec();
 
-                // Cache the downloaded data
-                let _ = self.image_cache.update_cached_data(&uri, data.clone());
+            // Cache the downloaded data
+            let _ = self.image_cache.update_cached_data(&uri, data.clone());
 
-                data
-            };
+            data
+        };
 
-            // Convert to base64
-            let base64_data = general_purpose::STANDARD.encode(&image_data);
-            let mime_type = crate::figma::ImageCache::get_mime_type(&entry.format);
+        // Convert to base64
+        let base64_data = general_purpose::STANDARD.encode(&image_data);
+        let mime_type = crate::figma::ImageCache::get_mime_type(&entry.format);
 
-            Ok(ReadResourceResult {
-                contents: vec![ResourceContents::BlobResourceContents {
-                    uri: uri.clone(),
-                    mime_type: Some(mime_type.to_string()),
-                    blob: base64_data,
-                }],
-            })
-        }
+        Ok(ReadResourceResult {
+            contents: vec![ResourceContents::BlobResourceContents {
+                uri: uri.clone(),
+                mime_type: Some(mime_type.to_string()),
+                blob: base64_data,
+            }],
+        })
     }
 }
 
