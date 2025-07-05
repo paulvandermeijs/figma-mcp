@@ -10,7 +10,8 @@ design assets through a standardized interface.
 - **Image Export**: Export design assets in PNG, JPG, SVG, or PDF formats
 - **URL Parsing**: Extract file keys from Figma URLs
 - **Depth Management**: Control response size to prevent token limits
-- **Resource Support**: Exported images are available as MCP resources with base64-encoded content
+- **Resource Support**: Exported images are available as MCP resources with
+  base64-encoded content
 
 ## Installation
 
@@ -23,7 +24,7 @@ cargo install figma-mcp
 ### Option 2: Build from source
 
 ```bash
-git clone https://github.com/your-username/figma-mcp.git
+git clone https://github.com/paulvandermeijs/figma-mcp.git
 cd figma-mcp
 cargo build --release
 ```
@@ -40,10 +41,11 @@ cargo build --release
    ```
 
 3. Run the server:
+
    ```bash
    # If installed via cargo install
    figma-mcp
-   
+
    # If built from source
    cargo run --release
    ```
@@ -68,6 +70,7 @@ cargo build --release
 ### Resources
 
 Exported images are automatically available as MCP resources:
+
 - List resources to see all exported images
 - Read resources to get base64-encoded image data
 - Resource URIs: `figma://file/{file_key}/node/{node_id}.{format}`
